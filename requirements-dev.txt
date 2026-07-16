@@ -1,7 +1,7 @@
 # Qualité et sécurité
 ruff>=0.8.0
 bandit>=1.7.0
-pip-audit>=2.7.0
+pip-audit>=2.10.1
 
 # Tests
 pytest>=8.0.0
