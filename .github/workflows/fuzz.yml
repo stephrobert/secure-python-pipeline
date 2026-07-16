@@ -1,0 +1,39 @@
+name: Fuzz
+
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 3 * * 1"
+
+permissions: {}
+
+jobs:
+  fuzz:
+    name: Fuzzing (Atheris)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+      - name: Install (épinglé par hash)
+        run: |
+          pip install --require-hashes -r requirements.txt
+          pip install --require-hashes -r requirements-fuzz.txt
+      - name: Run fuzzing (budget limité)
+        env:
+          PYTHONPATH: src
+        # -runs / -max_total_time bornent l'exécution en CI ; un crash (5xx) échoue.
+        run: python fuzz/fuzz_api.py -runs=20000 -max_total_time=120
