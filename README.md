@@ -9,9 +9,21 @@
 [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://slsa.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Lab pédagogique : une API Python (FastAPI) accompagnée d'un pipeline GitHub
-Actions qui applique une chaîne d'approvisionnement logicielle sécurisée de bout
-en bout. Support de la formation [GitHub Actions](https://blog.stephane-robert.info/docs/pipeline-cicd/github/).
+**Une référence de la sécurité d'un pipeline CI/CD GitHub Actions.** Ce dépôt
+montre, sur une API Python (FastAPI) volontairement minimale, à quoi ressemble
+une chaîne d'approvisionnement logicielle sécurisée **de bout en bout** :
+épinglage strict, permissions minimales, image durcie, provenance SLSA signée,
+SBOM attesté, et un pipeline qui vise la note maximale sur tous les rapports de
+sécurité (OpenSSF Scorecard, Plumber, zizmor, poutine, actionlint, Trivy).
+
+Il sert de support pratique à la formation du site :
+
+- [Formation GitHub Actions](https://blog.stephane-robert.info/docs/pipeline-cicd/github/) : le parcours complet.
+- [Sécuriser ses pipelines](https://blog.stephane-robert.info/docs/pipeline-cicd/github/securite/) : le volet sécurité (pinning SHA, permissions, OIDC, attestations).
+- [Lab pipeline sécurisé end to end](https://blog.stephane-robert.info/docs/pipeline-cicd/github/securite/lab-pipeline-securise/) : le guide pas à pas qui construit ce dépôt.
+
+Chaque choix technique de ce dépôt est expliqué dans ces guides : il n'est pas
+fait pour être copié tel quel, mais pour être **compris**.
 
 ## Ce que le pipeline garantit
 

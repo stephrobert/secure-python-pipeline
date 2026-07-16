@@ -1,0 +1,9 @@
+# getplumber/plumber est l'action officielle de Plumber (getplumber.io), un
+# scanner de sécurité CI/CD de confiance utilisé dans ce pipeline. Elle n'est pas
+# (encore) référencée comme "verified creator" du Marketplace, ce que poutine
+# signale. On acquitte ce faux positif de façon CIBLÉE : la règle reste active
+# pour toute autre action tierce.
+skip:
+  - rule: github_action_from_unverified_creator_used
+    purl:
+      - pkg:githubactions/getplumber/plumber
