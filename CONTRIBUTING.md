@@ -36,6 +36,9 @@ pip-audit -r requirements.txt   # vulnérabilités des dépendances
 - Les **dépendances Python** passent par `requirements.in` puis
   `pip-compile --generate-hashes`. On ne modifie jamais `requirements.txt` à la main.
 - Aucun **secret en clair** dans le code ou les workflows.
+- **Toute nouvelle fonctionnalité ou correction de bug est accompagnée d'un
+  test** qui échoue sans le changement et passe avec. Le harnais de fuzzing
+  (`fuzz/`) est exécuté en CI et complète les tests unitaires.
 
 ## Processus
 

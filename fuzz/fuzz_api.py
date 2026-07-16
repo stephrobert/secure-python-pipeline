@@ -13,10 +13,12 @@ import sys
 
 import atheris
 
-with atheris.instrument_imports():
-    from fastapi.testclient import TestClient
+# On n'instrumente PAS les imports : pydantic-core est une extension compilée
+# (Rust) avec un custom loader qui fait planter atheris.instrument_imports()
+# (segfault). Le fuzzing reste valide sur la logique de routage/validation.
+from fastapi.testclient import TestClient  # noqa: E402
 
-    from app.main import app
+from app.main import app  # noqa: E402
 
 client = TestClient(app)
 
