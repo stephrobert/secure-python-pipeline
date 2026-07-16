@@ -89,7 +89,7 @@ jobs:
         run: bandit -r src
 
   audit:
-    name: Audit dépendances (pip-audit + OSV)
+    name: Audit dépendances (pip-audit + Trivy)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
