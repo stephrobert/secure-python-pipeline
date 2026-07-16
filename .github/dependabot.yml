@@ -9,6 +9,13 @@ updates:
     labels:
       - "dependencies"
       - "python"
+    # Quarantaine anti-supply-chain : on n'adopte pas une version le jour de sa
+    # sortie (fenêtre où une compromission n'est pas encore détectée).
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
 
   # Actions GitHub : Dependabot remonte les SHA épinglés vers la dernière version
   - package-ecosystem: "github-actions"
@@ -18,6 +25,11 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
 
   # Image de base du Dockerfile (suit le digest)
   - package-ecosystem: "docker"
@@ -27,3 +39,5 @@ updates:
     labels:
       - "dependencies"
       - "docker"
+    cooldown:
+      default-days: 7
