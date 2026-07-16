@@ -64,6 +64,9 @@ jobs:
           image: ${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
           format: cyclonedx-json
           output-file: sbom.cdx.json
+          # Le SBOM est attesté au registre (attest-sbom) : pas besoin de
+          # l'attacher à la release, ce qui exigerait contents: write.
+          upload-release-assets: false
       - name: Attester le SBOM
         uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
         with:
