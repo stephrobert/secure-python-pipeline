@@ -3,7 +3,9 @@
 [![CI](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/codeql.yml/badge.svg)](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/codeql.yml)
 [![Scorecard](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/scorecard.yml/badge.svg)](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/scorecard.yml)
+[![Plumber](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/plumber.yml/badge.svg)](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/plumber.yml)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/stephrobert/secure-python-pipeline/badge)](https://scorecard.dev/viewer/?uri=github.com/stephrobert/secure-python-pipeline)
+[![Plumber Score](https://score.getplumber.io/github.com/stephrobert/secure-python-pipeline.svg)](https://score.getplumber.io/github.com/stephrobert/secure-python-pipeline)
 [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://slsa.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 

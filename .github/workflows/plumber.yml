@@ -1,0 +1,39 @@
+name: Plumber
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  plumber:
+    name: Plumber (trust policy CI/CD)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write # upload du SARIF
+      id-token: write # publication du score (badge)
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Analyse Plumber
+        uses: getplumber/plumber@6363eb0229636fb7463e9431281ad7584a65c964 # v0.4.6
+        with:
+          # Gate strict dès le départ : la moindre non-conformité fait échouer
+          # le workflow (min-points 100, pas de soft-fail).
+          min-points: "100"
+          soft-fail: false
+          # Vérifie la provenance SLSA du binaire plumber téléchargé.
+          verify-attestation: true
+          # Publie le score sur le badge (OIDC, dépôt public).
+          score-push: true
