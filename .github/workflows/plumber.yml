@@ -26,6 +26,12 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+      - name: Générer un token GitHub App (Administration:read)
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.PLUMBER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PLUMBER_APP_PRIVATE_KEY }}
       - name: Analyse Plumber
         uses: getplumber/plumber@6363eb0229636fb7463e9431281ad7584a65c964 # v0.4.6
         with:
@@ -37,3 +43,7 @@ jobs:
           verify-attestation: true
           # Publie le score sur le badge (OIDC, dépôt public).
           score-push: true
+          # Token éphémère de GitHub App (Administration:read) pour lire la
+          # protection de branche complète : le GITHUB_TOKEN par défaut n'a
+          # pas ce droit et plumber ne verrait que 19/21 réglages.
+          github-token: ${{ steps.app-token.outputs.token }}

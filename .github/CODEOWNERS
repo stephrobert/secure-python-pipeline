@@ -1,6 +1,6 @@
 # Propriétaires par défaut : toute PR requiert leur revue.
-* @stephrobert
+* @stephrobert @coconux3
 
 # La chaîne CI/CD est sensible : revue obligatoire sur les workflows.
-/.github/workflows/ @stephrobert
-/Dockerfile @stephrobert
+/.github/workflows/ @stephrobert @coconux3
+/Dockerfile @stephrobert @coconux3
