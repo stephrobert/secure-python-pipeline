@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
-      contents: read # lecture du code
+      contents: write # attacher la provenance a la release (Signed-Releases)
       packages: write # push vers GHCR
       id-token: write # OIDC keyless (provenance + cosign)
       attestations: write # attestations natives GitHub
@@ -53,6 +53,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: Attestation de provenance SLSA (native)
+        id: attest
         uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
         with:
           subject-name: ${{ env.IMAGE }}
@@ -81,3 +82,11 @@ jobs:
           IMAGE: ${{ env.IMAGE }}
           DIGEST: ${{ steps.build.outputs.digest }}
         run: cosign sign --yes "${IMAGE}@${DIGEST}"
+      - name: Attacher la provenance à la release (Scorecard Signed-Releases)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+          BUNDLE: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          cp "$BUNDLE" provenance.intoto.jsonl
+          gh release upload "$TAG" provenance.intoto.jsonl --clobber
