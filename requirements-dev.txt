@@ -6,7 +6,7 @@ pip-audit>=2.7.0
 # Tests
 pytest>=8.0.0
 pytest-cov>=6.0.0
-httpx>=0.27.0
+httpx>=0.28.1
 
 # Build et compilation des dépendances épinglées par hash
 pip-tools>=7.4.0
