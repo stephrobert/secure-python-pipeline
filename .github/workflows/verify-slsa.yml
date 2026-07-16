@@ -1,0 +1,45 @@
+name: Verify SLSA
+
+# Vérifie la provenance et la signature de l'image publiée. Déclenchement manuel
+# (après une release) pour éviter toute course avec le push de l'image.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag de l'image à vérifier (ex : 1.0.0 ou latest)"
+        required: true
+        default: "latest"
+
+permissions: {}
+
+jobs:
+  verify:
+    name: Vérifier provenance et signature
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    env:
+      IMAGE: ghcr.io/stephrobert/secure-python-pipeline
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Installer Cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      - name: Vérifier l'attestation de provenance (native GitHub)
+        env:
+          IMAGE: ${{ env.IMAGE }}
+          TAG: ${{ inputs.tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh attestation verify "oci://${IMAGE}:${TAG}" --owner stephrobert
+      - name: Vérifier la signature Cosign (keyless)
+        env:
+          IMAGE: ${{ env.IMAGE }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          cosign verify "${IMAGE}:${TAG}" \
+            --certificate-identity-regexp "https://github.com/stephrobert/secure-python-pipeline/.github/workflows/release.yml@.*" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
