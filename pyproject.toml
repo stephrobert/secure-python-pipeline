@@ -22,8 +22,9 @@ line-length = 88
 select = ["E", "F", "I", "S", "B", "C4", "UP"]
 
 [tool.ruff.lint.per-file-ignores]
-# S101 = usage d'assert, normal dans les tests pytest
+# S101 = usage d'assert, normal dans les tests pytest et les harnais de fuzzing
 "tests/**/*.py" = ["S101"]
+"fuzz/**/*.py" = ["S101"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
