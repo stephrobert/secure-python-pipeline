@@ -10,3 +10,6 @@ httpx>=0.28.1
 
 # Build et compilation des dépendances épinglées par hash
 pip-tools>=7.4.0
+
+# Fuzzing
+atheris>=2.3.0
