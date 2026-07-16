@@ -1,11 +1,11 @@
 # Qualité et sécurité
-ruff>=0.8.0
+ruff>=0.15.21
 bandit>=1.9.4
-pip-audit>=2.7.0
+pip-audit>=2.10.1
 
 # Tests
 pytest>=9.1.1
-pytest-cov>=6.0.0
+pytest-cov>=7.1.0
 httpx>=0.28.1
 
 # Build et compilation des dépendances épinglées par hash
