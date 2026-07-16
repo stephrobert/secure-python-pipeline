@@ -1,6 +1,6 @@
 # Qualité et sécurité
 ruff>=0.8.0
-bandit>=1.7.0
+bandit>=1.9.4
 pip-audit>=2.7.0
 
 # Tests
