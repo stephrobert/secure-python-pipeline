@@ -17,7 +17,6 @@ jobs:
       contents: read
       security-events: write # upload du SARIF
       id-token: write # publication du score (badge)
-      administration: read # lecture complète de la protection de branche (branchMustBeProtected)
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -38,3 +37,7 @@ jobs:
           verify-attestation: true
           # Publie le score sur le badge (OIDC, dépôt public).
           score-push: true
+          # Token dédié en lecture seule (Administration:read) pour lire la
+          # protection de branche complète : le GITHUB_TOKEN par défaut n'a
+          # pas ce droit et plumber ne verrait que 19/21 réglages.
+          github-token: ${{ secrets.PLUMBER_TOKEN }}
