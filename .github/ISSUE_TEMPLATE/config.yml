@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Signaler une vulnérabilité
+    url: https://github.com/stephrobert/secure-python-pipeline/security/advisories/new
+    about: Pour toute faille de sécurité, utilisez le signalement privé, pas une issue publique.

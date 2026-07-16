@@ -1,0 +1,23 @@
+name: Signaler un bug
+description: Un comportement inattendu de l'application ou du pipeline
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Décrivez le problème et le comportement attendu.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes de reproduction
+      description: Comment reproduire le problème.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version ou digest de l'image
+      description: Tag ou digest sha256 concerné.

@@ -1,0 +1,18 @@
+name: Proposer une amélioration
+description: Suggérer une évolution de l'application ou du pipeline
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: besoin
+    attributes:
+      label: Besoin
+      description: Quel problème cette amélioration résout-elle ?
+    validations:
+      required: true
+  - type: textarea
+    id: proposition
+    attributes:
+      label: Proposition
+      description: Décrivez la solution envisagée.
+    validations:
+      required: true
