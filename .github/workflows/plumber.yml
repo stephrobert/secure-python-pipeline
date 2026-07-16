@@ -17,6 +17,7 @@ jobs:
       contents: read
       security-events: write # upload du SARIF
       id-token: write # publication du score (badge)
+      administration: read # lecture complète de la protection de branche (branchMustBeProtected)
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
