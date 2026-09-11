@@ -1,0 +1,114 @@
+name: Deploy
+
+# Promotion d'une image déjà construite et attestée par release.yml.
+# On ne reconstruit jamais entre staging et production : c'est le même
+# digest qui traverse les deux environnements.
+on:
+  workflow_dispatch:
+    inputs:
+      digest:
+        description: "Digest de l'image à déployer (sha256:...)"
+        required: true
+        type: string
+
+# Aucune permission par défaut : chaque job demande le strict nécessaire.
+permissions: {}
+
+# Une seule promotion à la fois. Sur un déploiement, on met en file
+# d'attente : couper une mise en production au milieu laisse le système
+# dans un état qu'aucune version n'a jamais connu.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    name: Déployer sur staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: staging
+      url: https://staging.example.invalid
+    permissions:
+      contents: read
+      packages: read # pull de l'image depuis GHCR
+      attestations: read # lecture de l'attestation de provenance
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+      DIGEST: ${{ inputs.digest }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Login GHCR
+        uses: docker/login-action@06fb636fac595d6fb4b28a5dfcb21a6f5091859c # v4.5.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Vérifier la provenance avant de déployer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh attestation verify "oci://${IMAGE}@${DIGEST}" --owner "${GITHUB_REPOSITORY_OWNER}"
+      - name: Déployer (simulation)
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          if [ -z "${DEPLOY_TOKEN}" ]; then
+            echo "Aucun jeton d'environnement reçu" >&2
+            exit 1
+          fi
+          # Empreinte tronquée : prouve quel secret a été délivré sans
+          # jamais en révéler la valeur.
+          echo "Cible     : ${IMAGE}@${DIGEST}"
+          echo "Empreinte : $(printf %s "${DEPLOY_TOKEN}" | sha256sum | cut -c1-12)"
+          docker run --rm --detach --name app-staging "${IMAGE}@${DIGEST}"
+          docker ps --filter name=app-staging
+
+  deploy-production:
+    name: Déployer en production
+    needs: deploy-staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: production
+      url: https://example.invalid
+    permissions:
+      contents: read
+      packages: read
+      attestations: read
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+      DIGEST: ${{ inputs.digest }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Login GHCR
+        uses: docker/login-action@06fb636fac595d6fb4b28a5dfcb21a6f5091859c # v4.5.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # La provenance est revérifiée ici : entre staging et production, il y
+      # a eu une attente d'approbation, parfois longue. Seul le contrôle le
+      # plus tardif dit quelque chose de l'état du registre au moment du
+      # déploiement.
+      - name: Vérifier la provenance avant de déployer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh attestation verify "oci://${IMAGE}@${DIGEST}" --owner "${GITHUB_REPOSITORY_OWNER}"
+      - name: Déployer (simulation)
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          if [ -z "${DEPLOY_TOKEN}" ]; then
+            echo "Aucun jeton d'environnement reçu" >&2
+            exit 1
+          fi
+          echo "Cible     : ${IMAGE}@${DIGEST}"
+          echo "Empreinte : $(printf %s "${DEPLOY_TOKEN}" | sha256sum | cut -c1-12)"
+          docker run --rm --detach --name app-prod "${IMAGE}@${DIGEST}"
+          docker ps --filter name=app-prod
