@@ -3,7 +3,7 @@
 # =============================================================================
 # Stage 1 : builder - installe les dépendances vérifiées par hash dans un venv
 # =============================================================================
-FROM python:3.11-slim@sha256:baf89808ec37adeaab83cec287adb4a2afa4a11c1d51e961c7ec737877e61af6 AS builder
+FROM python:3.11-slim@sha256:9534e5a8e315485d4061ed659af0fd78a284c015f9b73661b41d6bab25604534 AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -25,7 +25,7 @@ RUN pip uninstall -y setuptools wheel pip
 # =============================================================================
 # Stage 2 : production - image minimale, utilisateur non-root
 # =============================================================================
-FROM python:3.11-slim@sha256:baf89808ec37adeaab83cec287adb4a2afa4a11c1d51e961c7ec737877e61af6 AS production
+FROM python:3.11-slim@sha256:9534e5a8e315485d4061ed659af0fd78a284c015f9b73661b41d6bab25604534 AS production
 
 LABEL org.opencontainers.image.source="https://github.com/stephrobert/secure-python-pipeline"
 LABEL org.opencontainers.image.description="API Python avec supply chain securisee"
