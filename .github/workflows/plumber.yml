@@ -23,7 +23,7 @@ jobs:
         with:
           egress-policy: audit
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Générer un token GitHub App (Administration:read)
@@ -33,7 +33,7 @@ jobs:
           client-id: ${{ vars.PLUMBER_APP_CLIENT_ID }}
           private-key: ${{ secrets.PLUMBER_APP_PRIVATE_KEY }}
       - name: Analyse Plumber
-        uses: getplumber/plumber@6363eb0229636fb7463e9431281ad7584a65c964 # v0.4.6
+        uses: getplumber/plumber@f84005b69dc57965d192feedd08b4a20fa6e52cc # v0.4.60
         with:
           # Gate strict dès le départ : la moindre non-conformité fait échouer
           # le workflow (min-points 100, pas de soft-fail).
