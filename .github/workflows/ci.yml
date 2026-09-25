@@ -62,7 +62,9 @@ jobs:
           pip install --require-hashes -r requirements.txt
           pip install --require-hashes -r requirements-test.txt
       - name: Run pytest
-        run: pytest -q
+        # --cov applique le plancher de pyproject.toml ([tool.coverage.report]
+        # fail_under) : sous le seuil, le job échoue.
+        run: pytest -q --cov
 
   sast:
     name: SAST (bandit)
