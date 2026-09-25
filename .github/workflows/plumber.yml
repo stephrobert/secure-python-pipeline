@@ -39,11 +39,13 @@ jobs:
         with:
           client-id: ${{ vars.PLUMBER_APP_CLIENT_ID }}
           private-key: ${{ secrets.PLUMBER_APP_PRIVATE_KEY }}
-          # Le jeton ne reçoit que ce que Plumber lit : la protection de branche
-          # et le contenu du dépôt. Sans ces entrées, il hériterait de toutes
-          # les permissions de l'installation (zizmor github-app, High).
+          # Le jeton ne reçoit que ce que Plumber lit : la protection de branche.
+          # Sans cette entrée, il hériterait de toutes les permissions de
+          # l'installation (zizmor github-app, High). Ne demander QUE ce que
+          # l'App possède : réclamer contents:read, qu'elle n'a pas, fait
+          # échouer la création du jeton (« permissions requested are not
+          # granted to this installation », mesuré sur #44).
           permission-administration: read
-          permission-contents: read
       - name: Analyse Plumber
         uses: getplumber/plumber@d37150cee04d6627497cb4c6a553ef9a2d6c7548 # v0.5.2
         with:
