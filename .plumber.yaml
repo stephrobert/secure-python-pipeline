@@ -798,7 +798,11 @@ github:
         - production
         - dev
       allowForcePush: false
-      codeOwnerApprovalRequired: true
+      # Aligné sur le ruleset de main, calqué sur celui de feint : un seul
+      # mainteneur, aucune revue humaine exigée. La politique déclarée ici
+      # doit dire la même chose que le ruleset, sinon ce contrôle échoue
+      # (ISSUE-505) sur un choix délibéré.
+      codeOwnerApprovalRequired: false
 
     # ============================================================================
     # Workflows must include required actions
