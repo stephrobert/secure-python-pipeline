@@ -1,5 +1,7 @@
 # secure-python-pipeline
 
+**Langue :** [Français](README.md) · [English](README.en.md)
+
 [![CI](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/codeql.yml/badge.svg)](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/codeql.yml)
 [![Scorecard](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/scorecard.yml/badge.svg)](https://github.com/stephrobert/secure-python-pipeline/actions/workflows/scorecard.yml)
@@ -48,7 +50,7 @@ curl http://localhost:8000/health   # {"status":"healthy"}
 uv venv .venv && source .venv/bin/activate
 uv pip install --require-hashes -r requirements.txt
 uv pip install -r requirements-dev.txt
-ruff check . && pytest && bandit -r src
+ruff check . && pytest --cov && bandit -r src
 ```
 
 ## Vérifier la provenance d'une image

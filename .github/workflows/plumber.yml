@@ -11,6 +11,13 @@ permissions: {}
 jobs:
   plumber:
     name: Plumber (trust policy CI/CD)
+    # Un run déclenché par Dependabot ne reçoit pas les secrets Actions, et la
+    # clé de la GitHub App (PLUMBER_APP_PRIVATE_KEY) en fait partie : Plumber y
+    # échouait sur « private-key must be set » (#41, 2026-09-25). Le job est
+    # alors sauté, ce que le check obligatoire compte comme réussi. La mise à
+    # jour reste contrôlée : ce workflow rejoue sur chaque push vers main, avec
+    # la clé, et il tourne normalement quand un humain pousse sur la branche.
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -32,6 +39,11 @@ jobs:
         with:
           client-id: ${{ vars.PLUMBER_APP_CLIENT_ID }}
           private-key: ${{ secrets.PLUMBER_APP_PRIVATE_KEY }}
+          # Le jeton ne reçoit que ce que Plumber lit : la protection de branche
+          # et le contenu du dépôt. Sans ces entrées, il hériterait de toutes
+          # les permissions de l'installation (zizmor github-app, High).
+          permission-administration: read
+          permission-contents: read
       - name: Analyse Plumber
         uses: getplumber/plumber@d37150cee04d6627497cb4c6a553ef9a2d6c7548 # v0.5.2
         with:

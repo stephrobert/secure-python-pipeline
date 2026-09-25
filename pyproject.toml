@@ -30,5 +30,17 @@ select = ["E", "F", "I", "S", "B", "C4", "UP"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 
+# Couverture : un plancher imposé, branches comprises. La CI lance
+# `pytest --cov` et échoue sous le seuil. Mesuré le 2026-09-25 : 100 % des
+# instructions et des branches de src/app ; le plancher laisse de la marge
+# sans laisser passer une fonction entière non testée.
+[tool.coverage.run]
+source = ["app"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]
