@@ -1,43 +1,91 @@
+# Règles Dependabot communes aux dépôts stephrobert.
+#
+# Ce fichier suit le MÊME modèle que kubernetes-dsoxlab-training,
+# linux-dsoxlab-training, ansible-training, dsoxlab et scankit. Seuls les
+# écosystèmes changent selon le dépôt : ici `pip` (dépendances verrouillées
+# par pip-compile, avec empreintes), les actions GitHub, et l'image de base
+# du Dockerfile. Une divergence se corrige en réalignant le dépôt sur ce
+# modèle, pas en adaptant le modèle au dépôt.
+#
+# Ce que le modèle règle : le NOMBRE de pull requests. Sans bloc `groups`,
+# Dependabot ouvre une branche, une PR et une CI complète PAR DÉPENDANCE.
+# Mesuré le 2026-09-25 sur ce dépôt : 10 PR Dependabot ouvertes en même
+# temps, dont 8 mineures ou correctifs qui ne méritaient pas chacune leur
+# revue, et une seule des trois actions github/codeql-action/*, qui sortent
+# pourtant toujours la même version le même jour.
 version: 2
 updates:
-  # Dépendances Python (met à jour requirements.in, à recompiler ensuite)
+  # --- Paquets Python ------------------------------------------------------
+  #
+  # Les `requirements*.in` déclarent, les `requirements*.txt` verrouillent avec
+  # leurs empreintes (`pip-compile --generate-hashes`) : c'est le verrou que
+  # Dependabot fait avancer, et c'est lui que les scanners lisent.
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "python"
-    # Quarantaine anti-supply-chain : on n'adopte pas une version le jour de sa
-    # sortie (fenêtre où une compromission n'est pas encore détectée).
+    commit-message:
+      prefix: "chore(deps)"
+    # Laisser décanter une nouvelle release : un paquet compromis est
+    # généralement retiré en quelques jours, et le cooldown réduit d'autant la
+    # fenêtre pendant laquelle on l'aurait tiré.
+    #
+    # Les paliers semver sont supportés pour les écosystèmes de PAQUETS : une
+    # majeure attend deux semaines, un correctif trois jours.
     cooldown:
       default-days: 7
       semver-major-days: 14
       semver-minor-days: 7
       semver-patch-days: 3
+    groups:
+      deps-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  # Actions GitHub : Dependabot remonte les SHA épinglés vers la dernière version
+  # --- Actions GitHub ------------------------------------------------------
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    labels:
-      - "dependencies"
-      - "github-actions"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(ci)"
+    # `default-days` SEUL ici : les paliers semver-{major,minor,patch}-days ne
+    # sont PAS supportés pour l'écosystème github-actions. Les déclarer fait
+    # échouer la validation du fichier côté GitHub, qui cesse alors d'ouvrir
+    # des PR, et cela ressemble exactement à « aucune mise à jour disponible ».
     cooldown:
       default-days: 7
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 3
+    # Un lot par semaine plutôt qu'une branche par action.
+    #
+    # Les majeures restent seules : ce sont elles qui cassent, elles méritent
+    # d'être lues, et les grouper ferait qu'une action incompatible bloquerait
+    # toutes les autres du lot.
+    #
+    # Les alertes de sécurité restent hors groupe, ce qui est le défaut
+    # (`applies-to: version-updates`) : elles sont urgentes et méritent une PR
+    # ciblée plutôt que d'attendre le lot hebdomadaire.
+    groups:
+      actions-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  # Image de base du Dockerfile (suit le digest)
+  # --- Image de base du Dockerfile ----------------------------------------
+  #
+  # Dependabot suit le digest de `python:3.11-slim`. Les deux étapes du
+  # Dockerfile (builder et production) épinglent la même image : le groupe
+  # les fait avancer ensemble, dans une seule PR.
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
-    labels:
-      - "dependencies"
-      - "docker"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(docker)"
     cooldown:
       default-days: 7
+    groups:
+      docker-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
