@@ -20,26 +20,30 @@ jobs:
     permissions:
       contents: read
       packages: read
-    env:
-      IMAGE: ghcr.io/stephrobert/secure-python-pipeline
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
+      # GHCR n'accepte que des noms en minuscules, et un nom de compte GitHub
+      # peut en contenir. Le nom se dérive du dépôt qui tourne : un fork
+      # publie et vérifie SA propre image, sans retouche.
+      - name: Nom de l'image
+        id: image
+        run: echo "nom=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
       - name: Installer Cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
       - name: Vérifier l'attestation de provenance (native GitHub)
         env:
-          IMAGE: ${{ env.IMAGE }}
+          IMAGE: ${{ steps.image.outputs.nom }}
           TAG: ${{ inputs.tag }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh attestation verify "oci://${IMAGE}:${TAG}" --owner stephrobert
+        run: gh attestation verify "oci://${IMAGE}:${TAG}" --owner "${GITHUB_REPOSITORY_OWNER}"
       - name: Vérifier la signature Cosign (keyless)
         env:
-          IMAGE: ${{ env.IMAGE }}
+          IMAGE: ${{ steps.image.outputs.nom }}
           TAG: ${{ inputs.tag }}
         run: |
           cosign verify "${IMAGE}:${TAG}" \
-            --certificate-identity-regexp "https://github.com/stephrobert/secure-python-pipeline/.github/workflows/release.yml@.*" \
+            --certificate-identity-regexp "^https://github.com/${GITHUB_REPOSITORY}/.github/workflows/release.yml@" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
