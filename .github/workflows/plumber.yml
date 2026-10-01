@@ -47,7 +47,7 @@ jobs:
           # granted to this installation », mesuré sur #44).
           permission-administration: read
       - name: Analyse Plumber
-        uses: getplumber/plumber@d37150cee04d6627497cb4c6a553ef9a2d6c7548 # v0.5.2
+        uses: getplumber/plumber@de6c889e24c9147baa064db656b71c8e98595d15 # v0.5.8
         with:
           # Gate strict dès le départ : la moindre non-conformité fait échouer
           # le workflow (min-points 100, pas de soft-fail).
