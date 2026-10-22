@@ -26,7 +26,7 @@ jobs:
       id-token: write # publication du score (badge)
     steps:
       - name: Harden runner
-        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
         with:
           egress-policy: audit
       - name: Checkout
@@ -35,7 +35,7 @@ jobs:
           persist-credentials: false
       - name: Générer un token GitHub App (Administration:read)
         id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           client-id: ${{ vars.PLUMBER_APP_CLIENT_ID }}
           private-key: ${{ secrets.PLUMBER_APP_PRIVATE_KEY }}
@@ -47,7 +47,7 @@ jobs:
           # granted to this installation », mesuré sur #44).
           permission-administration: read
       - name: Analyse Plumber
-        uses: getplumber/plumber@d37150cee04d6627497cb4c6a553ef9a2d6c7548 # v0.5.2
+        uses: getplumber/plumber@669507c3cc8282406ae58816823fd84a32752633 # v0.6.4
         with:
           # Gate strict dès le départ : la moindre non-conformité fait échouer
           # le workflow (min-points 100, pas de soft-fail).
